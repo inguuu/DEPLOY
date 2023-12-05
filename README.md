@@ -70,3 +70,34 @@ server {
     }
 }
 ``````````
+``````````
+server { 
+  listen 80; # 80포트로 받을 때
+  server_name dailylifestory.co.kr www.dailylifestory.co.kr; # 도메인주소
+  return 301 https://dailylifestory.co.kr/home;
+
+}
+
+server {
+        listen 443 ssl http2;
+        # 내 도메인 주소
+        server_name dailylifestory.co.kr www.dailylifestory.co.kr;
+
+        ssl_certificate /etc/letsencrypt/live/dailylifestory.co.kr/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/dailylifestory.co.kr/privkey.pem;
+
+        location / {
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_set_header X-NginX-Proxy true;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          # 서비스 되고 있는 Express App 포트
+
+          proxy_pass http://127.0.0.1:3000;
+          proxy_redirect off;
+
+    }
+}
+``````````
+
